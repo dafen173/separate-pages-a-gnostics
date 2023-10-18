@@ -78,7 +78,6 @@ function closeSubmenu () {
 }
 
 
-
 //==================== DROPDOWM MENU FOR SMALL SCREEN MODE =======================================
 
 const dropdownItems = document.querySelectorAll('.header__navbar__item__container--active')
@@ -103,72 +102,78 @@ dropdownItems.forEach( (item) => {
 })
 
 
+//==================== DRAG AND DROP SERVICES CALCULATOR FOR SERVICES PAGE =======================================
 
-// const res = document.querySelector('.header__navbar__item--services_page')
-// const bigScreenItem = `
-//         <a class="header__navbar__item header__navbar__item__container" href="./index.html#product-di-agnostics">
-//             PRODUCT: DI-AGNOSTICS
-//             <svg class="header__navbar__item__arrow_down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.9997 13.1714L16.9495 8.22168L18.3637 9.63589L11.9997 15.9999L5.63574 9.63589L7.04996 8.22168L11.9997 13.1714Z"></path></svg>
-//         </a>
-//         <div onclick="window.location.href = './product-di-agnostics.html'" class="header__navbar__item__submenu">
-//             TO PRODUCT: DI-AGNOSTICS PAGE
-//         </div>
-// `
-// const smallScreenItem = `
-//     <a class="header__navbar__item header__navbar__item--dropdown" href="index.html#product-di-agnostics">
-//         <div class="header__navbar__item__container header__navbar__item__container--active">
-//             PRODUCT: DI-AGNOSTICS
-//             <svg class="header__navbar__item__arrow_down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.9997 13.1714L16.9495 8.22168L18.3637 9.63589L11.9997 15.9999L5.63574 9.63589L7.04996 8.22168L11.9997 13.1714Z"></path></svg>
-//         </div>
+const data = [
+    {
+        "id": 1,
+        "title": "Service 1",
+        "price": 100
+    },
+    {
+        "id": 2,
+        "title": "Service 2",
+        "price": 200
+    },
+    {
+        "id": 3,
+        "title": "Service 3",
+        "price": 300
+    },
+    {
+        "id": 4,
+        "title": "Service 4",
+        "price": 400
+    },
+    {
+        "id": 5,
+        "title": "Service 5",
+        "price": 500
+    },
+]
 
-//         <div onclick="window.location.href = './product-di-agnostics.html'" class="header__navbar__item__submenu">
-//             TO PRODUCT: DI-AGNOSTICS PAGE
-//         </div>
-//     </a>
-// `
+let lists = document.getElementsByClassName('services_list')
+let rightBox = document.querySelector('.calc_container__right')
+let leftBox = document.querySelector('.calc_container__left')
+let totalCost = document.querySelector('.total_cost')
 
+let pricesSum = 0
+let totalCostContent = `Total cost: $${pricesSum}.`
+totalCost.innerHTML = totalCostContent
 
+data.map(function(obj){
+    let serviceEl = document.createElement('div')
+    serviceEl.className = 'services_list'
+    serviceEl.draggable = true
+    serviceEl.dataset.price = obj.price
+    serviceEl.innerHTML = `${obj.title}, price $${obj.price}.`
+    leftBox.appendChild(serviceEl)
+})
 
+for (service of lists) {
+    service.addEventListener('dragstart', function(e){
+        let selected = e.target
 
+        rightBox.addEventListener('dragover', function(e){
+            e.preventDefault()
+        })
 
-/*
-Hi Oleks,
+        rightBox.addEventListener('drop', function(e){
+            rightBox.appendChild(selected)
+            pricesSum += parseInt(selected.dataset.price)
+            totalCost.innerHTML = `Total cost: $${pricesSum}.`
+            selected = null
+        })
 
-thank you for your time and efforts to update smartificialelements website.
+        leftBox.addEventListener('dragover', function(e){
+            e.preventDefault()
+        })
 
-Please, find the following comments:
-
-1. The version from https://dafen173.github.io/a-gnostics-pure-js/index.html couldn't be deployed to production because the header menu is not ready:
-
-- If you have only one element in the drop-down menu, it should not be one item with line starts with TO ...
-
--- For Service's drop-down it could be solution just go service.html page.
-
--- For Product(s) it can be only Products in the main menu with dropdowns: DI-AGNOSTICS and CBF.
-
-But it is not production ready as we don't have content for that pages.
-
-The quick solution might be disable drop-downs and stay with ankers.
-
- 2. Please, open https://smartificialelement.com in one tab and https://dafen173.github.io/a-gnostics-pure-js/index.html in other. Click between them.
-
-In my screens your version looks larger than original.
-
-2.1 Compare Services screen. In which version it is easy to read the text? See some recommendations how wide text should be. See how wide text is when you google.
-
-3. Product: Di-agnostic your text and images looks larger than original.
-
-4. Please, compare the rest of the index.html page: fonts, position, spaces between rows, etc.
-The minor notes:
-
-5. This website has no relationships (formally) to a-Gnostics or SoftElegance.
-
-- disable URL to social networks at the footer, as Smartificialelement has no SN yet.
-
-6. I have not tested mobile view. Please, do it after the fixes above.
-Looking forward to hearing from you
-
-Regards
-Andy
-
-*/
+        leftBox.addEventListener('drop', function(e){
+            leftBox.appendChild(selected)
+            pricesSum -= parseInt(selected.dataset.price)
+            totalCost.innerHTML = `Total cost: $${pricesSum}.`
+            selected = null
+        })
+    })
+}
